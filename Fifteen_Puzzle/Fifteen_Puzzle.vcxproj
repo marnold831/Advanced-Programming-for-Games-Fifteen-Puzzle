@@ -153,9 +153,11 @@
   <ItemGroup>
     <ClCompile Include="Fifteen_Puzzle.cpp" />
     <ClCompile Include="Puzzle.cpp" />
+    <ClCompile Include="PuzzleFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Puzzle.h" />
+    <ClInclude Include="PuzzleFactory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

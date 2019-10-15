@@ -1,11 +1,25 @@
 #include "Puzzle.h"
-#include <vector>
 #include <iomanip>
 
 
 Puzzle::Puzzle(int dimension, int maxInput): dimension(dimension), totalNumbers(dimension*dimension-1), maxInput(maxInput){
 	grid = new int[dimension * dimension]{0};
+	
 }
+
+Puzzle::~Puzzle() {
+	delete[] grid;
+}
+
+Puzzle::Puzzle(const Puzzle& puzzle) {
+	this->maxInput = puzzle.maxInput;
+	this->minInput = puzzle.minInput;
+	this->grid = new int[puzzle.totalNumbers];
+	this->dimension = puzzle.dimension;
+	this->totalNumbers = puzzle.totalNumbers;
+	std::copy(puzzle.grid, puzzle.grid + puzzle.totalNumbers, this->grid);
+}
+
 void Puzzle::ManualCreation(){
 	std::vector<int> enteredNumber = std::vector<int>(15);
 	int index = 0;
@@ -36,16 +50,11 @@ int Puzzle::getInputedNumber() {
 
 			bool foundMatched = false;
 
-			for (int i = 0; i < totalNumbers; i++) {
-				if (currentInput != grid[i])continue;
-
-				std::cout << "Number has been entered previously" << std::endl;
-				foundMatched = true;
-				break;
+			if (std::none_of(begin(), end(), [currentInput](int i) { return i == currentInput; })) {
+				return currentInput;
 			}
 
-			if (!foundMatched)
-				return currentInput;
+			std::cout << "Number has been entered previously" << std::endl;
 		}
 
 		

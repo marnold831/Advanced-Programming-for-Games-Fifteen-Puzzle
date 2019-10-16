@@ -7,19 +7,18 @@
 
 int main()
 {
+	//Puzzle p(PuzzleFactory::createRandomPuzzle(4, 20));
+	Puzzle p = PuzzleFactory::createRandomPuzzle(4, 20);
+	std::cout << p;
+	Puzzle d = PuzzleFactory::createManualPuzzle(4, 20);
+	std::cout << d;
 
-	Puzzle p = PuzzleFactory::createManualPuzzle(4, 30);
-	/*Puzzle p(4,30);
-
-	p.ManualCreation();*/
-	Puzzle d(p);
-	std::cout << d << std::endl;
-	std::ofstream myfile("Configurations.txt");
+	/*std::ofstream myfile("Configurations.txt");
 	if (myfile.is_open()) {
 		myfile << p;
 		myfile.flush();
 		myfile.close();
-	}
+	}*/
 
 	
 }

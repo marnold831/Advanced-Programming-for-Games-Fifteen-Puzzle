@@ -17,7 +17,7 @@ Puzzle::Puzzle(const Puzzle& puzzle) {
 	this->grid = new int[puzzle.totalNumbers];
 	this->dimension = puzzle.dimension;
 	this->totalNumbers = puzzle.totalNumbers;
-	std::copy(puzzle.grid, puzzle.grid + puzzle.totalNumbers, this->grid);
+	std::copy(puzzle.grid, puzzle.grid + puzzle.totalNumbers+1, this->grid);
 }
 
 void Puzzle::ManualCreation(){
@@ -27,7 +27,7 @@ void Puzzle::ManualCreation(){
 		
 		int validInput = getInputedNumber();
 		grid[index] = validInput;
-		//enteredNumber.push_back(validInput);
+		
 		index++;
 		if (index >= totalNumbers) {
 			break;

@@ -1,8 +1,7 @@
 #include "Puzzle.h"
 #include <iomanip>
 
-
-Puzzle::Puzzle(int dimension, int maxInput): dimension(dimension), totalNumbers(dimension*dimension-1), maxInput(maxInput){
+Puzzle::Puzzle(int dimension): dimension(dimension), totalNumbers(dimension*dimension-1){
 	grid = new int[dimension * dimension]{0};
 	
 }
@@ -11,54 +10,30 @@ Puzzle::~Puzzle() {
 	delete[] grid;
 }
 
-Puzzle::Puzzle(const Puzzle& puzzle) {
-	this->maxInput = puzzle.maxInput;
-	this->minInput = puzzle.minInput;
-	this->grid = new int[puzzle.totalNumbers];
+Puzzle& Puzzle::operator=(const Puzzle& puzzle){
 	this->dimension = puzzle.dimension;
+	this->grid = new int[this->dimension * this->dimension];
 	this->totalNumbers = puzzle.totalNumbers;
-	std::copy(puzzle.grid, puzzle.grid + puzzle.totalNumbers+1, this->grid);
+	this->hash = puzzle.hash;
+	std::copy(puzzle.grid, puzzle.grid + puzzle.totalNumbers + 1, this->grid);
+
+	return *this;
 }
 
-void Puzzle::ManualCreation(){
-	std::vector<int> enteredNumber = std::vector<int>(15);
-	int index = 0;
-	while (true) {
-		
-		int validInput = getInputedNumber();
-		grid[index] = validInput;
-		
-		index++;
-		if (index >= totalNumbers) {
-			break;
-		}
-		
-	}
+Puzzle& Puzzle::operator=(const Puzzle&& puzzle)
+{
+	return *this;
 }
 
-int Puzzle::getInputedNumber() {
-	while (true) {
-		int currentInput = 0;
-
-			std::cout << "Enter a number between 1 and " << maxInput << " that has not been entered previously" << std::endl;
-			std::cin >> currentInput;
-
-			if (currentInput < minInput || currentInput > maxInput) {
-				std::cout << "Number is out of range of 1 to " << maxInput << std::endl;
-				continue;
-			}
-
-			bool foundMatched = false;
-
-			if (std::none_of(begin(), end(), [currentInput](int i) { return i == currentInput; })) {
-				return currentInput;
-			}
-
-			std::cout << "Number has been entered previously" << std::endl;
-		}
-
-		
+Puzzle::Puzzle(const Puzzle& puzzle) {
+	*this = puzzle;
 }
+
+Puzzle::Puzzle(const Puzzle&& puzzle)
+{
+	*this = puzzle;
+}
+
 
 unsigned int Puzzle::indexGrid(int x, int y) const  {
 	return x + dimension * y;

@@ -156,6 +156,7 @@
     <ClCompile Include="PuzzleFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HashUtil.h" />
     <ClInclude Include="Puzzle.h" />
     <ClInclude Include="PuzzleFactory.h" />
   </ItemGroup>

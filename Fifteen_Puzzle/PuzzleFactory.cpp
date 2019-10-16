@@ -1,5 +1,9 @@
 #include "PuzzleFactory.h"
 #include <random>
+#include <chrono>
+#include "HashUtil.h"
+
+typedef std::chrono::high_resolution_clock clock;
 
 Puzzle PuzzleFactory::createRandomPuzzle(int dimension, int maxInput)
 {
@@ -16,25 +20,58 @@ Puzzle PuzzleFactory::createRandomPuzzle(int dimension, int maxInput)
 		possibleNumbers[i] = i+1;
 	}
 
-	auto rng = std::default_random_engine{};
+	/* -Seed Example 
+	   -http://www.cplusplus.com/reference/random/mersenne_twister_engine/seed/
+	   -Accessed 16/10/19
+	 */
+	clock::time_point now = clock::now();
+	clock::duration d = clock::now() - now;
+	unsigned seed = d.count();
+
+
+	auto rng = std::mt19937{};
+	rng.seed(seed);
 	std::shuffle(std::begin(possibleNumbers), std::end(possibleNumbers), rng);
 
 	possibleNumbers.resize(minNumbersRequired);
 
-	Puzzle p(dimension, correctMaxInput);
+	Puzzle p(dimension);
 
 	generatePuzzle(possibleNumbers, p);
+	p.hash = HashUtil::arrayHash(p.grid, minNumbersRequired);
 	return p;
+}
+
+std::vector<Puzzle> PuzzleFactory::createRandomPuzzle(int numberofPuzzles, int dimension, int maxInput)
+{
+	std::vector<Puzzle> puzzles;
+	puzzles.reserve(numberofPuzzles);
+	
+	int index = 0;
+	while (index < numberofPuzzles) {
+		bool check = false;
+
+		Puzzle temp = createRandomPuzzle(dimension, maxInput);
+
+		if (std::none_of(puzzles.begin(), puzzles.end(), [temp](const Puzzle& p) { return p.hash == temp.hash; })) {
+			check = true;
+		}
+		if (check) {
+			puzzles.push_back(temp);
+			index++;
+		}
+	}
+	return puzzles;
 }
 
 Puzzle PuzzleFactory::createManualPuzzle(int dimension, int maxInput)
 {
 
-	Puzzle temp(dimension, maxInput);
+	Puzzle temp(dimension);
 	int index = 0;
 	while (true) {
 
-		int validInput = getInputedNumber(temp);
+		int validInput = getInputedNumber(temp, maxInput);
 		temp.grid[index] = validInput;
 
 		index++;
@@ -46,16 +83,17 @@ Puzzle PuzzleFactory::createManualPuzzle(int dimension, int maxInput)
 	return temp;
 }
 
-int PuzzleFactory::getInputedNumber(const Puzzle& puzzle)
+int PuzzleFactory::getInputedNumber(const Puzzle& puzzle, int maxInput)
 {
+	int minInput = 0;
 	while (true) {
 		int currentInput = 0;
 
-		std::cout << "Enter a number between 1 and " << puzzle.maxInput << " that has not been entered previously" << std::endl;
+		std::cout << "Enter a number between 1 and " <<maxInput << " that has not been entered previously" << std::endl;
 		std::cin >> currentInput;
 
-		if (currentInput < puzzle.minInput || currentInput > puzzle.maxInput) {
-			std::cout << "Number is out of range of 1 to " << puzzle.maxInput << std::endl;
+		if (currentInput < minInput || currentInput > maxInput) {
+			std::cout << "Number is out of range of 1 to " << maxInput << std::endl;
 			continue;
 		}
 

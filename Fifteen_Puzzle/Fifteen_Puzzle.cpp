@@ -7,19 +7,19 @@
 
 int main()
 {
-	//Puzzle p(PuzzleFactory::createRandomPuzzle(4, 20));
-	Puzzle p = PuzzleFactory::createRandomPuzzle(4, 20);
-	std::cout << p;
-	Puzzle d = PuzzleFactory::createManualPuzzle(4, 20);
-	std::cout << d;
+	Puzzle p(PuzzleFactory::createRandomPuzzle(4, 20));
+	//Puzzle p = PuzzleFactory::createRandomPuzzle(4, 20);
+	//std::cout << p;
+	//Puzzle d = PuzzleFactory::createManualPuzzle(4, 20);
+	//std::cout << d;
 
-	/*std::ofstream myfile("Configurations.txt");
-	if (myfile.is_open()) {
-		myfile << p;
-		myfile.flush();
-		myfile.close();
-	}*/
+	
+	std::vector<Puzzle> puzzles = PuzzleFactory::createRandomPuzzle(12, 4, 20);
 
+	for (auto it : puzzles) {
+		std::cout << it;
+		std::cout << "" << std::endl;
+	}
 	
 }
 

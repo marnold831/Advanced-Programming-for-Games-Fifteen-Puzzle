@@ -1,9 +1,11 @@
 #include "PuzzleFactory.h"
 #include <random>
 #include <chrono>
+#include <string>
+#include <fstream>
 #include "HashUtil.h"
 
-typedef std::chrono::high_resolution_clock clock;
+typedef std::chrono::high_resolution_clock myclock;
 
 Puzzle PuzzleFactory::createRandomPuzzle(int dimension, int maxInput)
 {
@@ -24,8 +26,8 @@ Puzzle PuzzleFactory::createRandomPuzzle(int dimension, int maxInput)
 	   -http://www.cplusplus.com/reference/random/mersenne_twister_engine/seed/
 	   -Accessed 16/10/19
 	 */
-	clock::time_point now = clock::now();
-	clock::duration d = clock::now() - now;
+	myclock::time_point now = myclock::now();
+	myclock::duration d = myclock::now() - now;
 	unsigned seed = d.count();
 
 
@@ -81,6 +83,30 @@ Puzzle PuzzleFactory::createManualPuzzle(int dimension, int maxInput)
 
 	}
 	return temp;
+}
+
+Puzzle PuzzleFactory::ReadConfigurationsFromFile(const std::string& filename)
+{
+	std::ifstream myfile(filename);
+
+	if (!myfile.is_open())
+		throw std::exception("oops");
+
+	std::vector<int> numbers;
+	int temp = -1;
+	while (!myfile.eof()) {
+		myfile >> temp;
+		if (temp == 0) {
+			break;
+		}
+		numbers.push_back(temp);
+	}
+	
+	int dim = static_cast<int>(std::sqrt(numbers.size() + 1));
+    Puzzle p(dim);
+	generatePuzzle(numbers, p);
+	p.hash = HashUtil::arrayHash(p.grid, p.totalNumbers);
+	return p;
 }
 
 int PuzzleFactory::getInputedNumber(const Puzzle& puzzle, int maxInput)

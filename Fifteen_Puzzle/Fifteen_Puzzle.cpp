@@ -8,18 +8,27 @@
 int main()
 {
 	Puzzle p(PuzzleFactory::createRandomPuzzle(4, 20));
-	//Puzzle p = PuzzleFactory::createRandomPuzzle(4, 20);
-	//std::cout << p;
-	//Puzzle d = PuzzleFactory::createManualPuzzle(4, 20);
+
+	//std::cout << p << std::endl;
+
+	//
+	std::ofstream myfile("Configurations.txt");
+	if (myfile.is_open()) {
+		myfile << p;
+	}
+	std::cout << p << std::endl;
+
+
+	////
+
+	//std::string s = "configurations.txt";
+	Puzzle d = PuzzleFactory::ReadConfigurationsFromFile("configurationkls.txt");
+	//Puzzle d();
 	//std::cout << d;
+	
+	
 
 	
-	std::vector<Puzzle> puzzles = PuzzleFactory::createRandomPuzzle(12, 4, 20);
-
-	for (auto it : puzzles) {
-		std::cout << it;
-		std::cout << "" << std::endl;
-	}
 	
 }
 

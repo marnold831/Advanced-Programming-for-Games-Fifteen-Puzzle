@@ -154,9 +154,10 @@
     <ClCompile Include="Fifteen_Puzzle.cpp" />
     <ClCompile Include="Puzzle.cpp" />
     <ClCompile Include="PuzzleFactory.cpp" />
+    <ClCompile Include="PuzzleSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HashUtil.h" />
+    <ClInclude Include="MathUtil.h" />
     <ClInclude Include="Puzzle.h" />
     <ClInclude Include="PuzzleFactory.h" />
     <ClInclude Include="PuzzleSolver.h" />

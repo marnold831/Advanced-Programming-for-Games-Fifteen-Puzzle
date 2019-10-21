@@ -3,28 +3,27 @@
 
 #include <iostream>
 #include "PuzzleFactory.h"
+#include "PuzzleSolver.h"
 #include <fstream>
 
 int main()
 {
-	Puzzle p(PuzzleFactory::createRandomPuzzle(4, 20));
+	Puzzle p(PuzzleFactory::createRandomPuzzle(2, 5));
+	
+	std::cout << "Starting Puzzle \n" << p << "--------"<< std::endl;;
+	
+	std::vector<uint64_t> hashes;
+	std::vector<Puzzle> allStates;
 
-	//std::cout << p << std::endl;
+	PuzzleSolver::controller(p, hashes, allStates);
+	std::vector<Puzzle> validTurns(PuzzleSolver::GetValidTurns(allStates));
 
-	//
-	std::ofstream myfile("Configurations.txt");
-	if (myfile.is_open()) {
-		myfile << p;
+	for (auto it : validTurns) {
+		std::cout << it << std::endl;
 	}
-	std::cout << p << std::endl;
 
+	std::cout << PuzzleSolver::FindContinousRows(validTurns);
 
-	////
-
-	//std::string s = "configurations.txt";
-	Puzzle d = PuzzleFactory::ReadConfigurationsFromFile("configurationkls.txt");
-	//Puzzle d();
-	//std::cout << d;
 	
 	
 

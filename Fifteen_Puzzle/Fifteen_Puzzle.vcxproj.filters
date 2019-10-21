@@ -24,6 +24,9 @@
     <ClCompile Include="PuzzleFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PuzzleSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Puzzle.h">
@@ -32,10 +35,10 @@
     <ClInclude Include="PuzzleFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HashUtil.h">
+    <ClInclude Include="PuzzleSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PuzzleSolver.h">
+    <ClInclude Include="MathUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

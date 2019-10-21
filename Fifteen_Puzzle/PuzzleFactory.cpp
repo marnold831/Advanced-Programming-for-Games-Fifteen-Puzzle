@@ -3,7 +3,7 @@
 #include <chrono>
 #include <string>
 #include <fstream>
-#include "HashUtil.h"
+
 
 typedef std::chrono::high_resolution_clock myclock;
 
@@ -40,7 +40,7 @@ Puzzle PuzzleFactory::createRandomPuzzle(int dimension, int maxInput)
 	Puzzle p(dimension);
 
 	generatePuzzle(possibleNumbers, p);
-	p.hash = HashUtil::arrayHash(p.grid, minNumbersRequired);
+	
 	return p;
 }
 
@@ -55,7 +55,7 @@ std::vector<Puzzle> PuzzleFactory::createRandomPuzzle(int numberofPuzzles, int d
 
 		Puzzle temp = createRandomPuzzle(dimension, maxInput);
 
-		if (std::none_of(puzzles.begin(), puzzles.end(), [temp](const Puzzle& p) { return p.hash == temp.hash; })) {
+		if (std::none_of(puzzles.begin(), puzzles.end(), [temp](const Puzzle& p) { return p.getHash() == temp.getHash(); })) {
 			check = true;
 		}
 		if (check) {
@@ -77,7 +77,7 @@ Puzzle PuzzleFactory::createManualPuzzle(int dimension, int maxInput)
 		temp.grid[index] = validInput;
 
 		index++;
-		if (index >= temp.totalNumbers) {
+		if (index >= temp.totalNumbers-1) {
 			break;
 		}
 
@@ -105,7 +105,6 @@ Puzzle PuzzleFactory::ReadConfigurationsFromFile(const std::string& filename)
 	int dim = static_cast<int>(std::sqrt(numbers.size() + 1));
     Puzzle p(dim);
 	generatePuzzle(numbers, p);
-	p.hash = HashUtil::arrayHash(p.grid, p.totalNumbers);
 	return p;
 }
 
@@ -134,7 +133,7 @@ int PuzzleFactory::getInputedNumber(const Puzzle& puzzle, int maxInput)
 
 }
 
-void PuzzleFactory::generatePuzzle(std::vector<int> numbers, Puzzle& puzzle)
+void PuzzleFactory::generatePuzzle(const std::vector<int>& numbers, Puzzle& puzzle)
 {
 	for (int i = 0; i < numbers.size(); i++) {
 		puzzle.grid[i] = numbers[i];

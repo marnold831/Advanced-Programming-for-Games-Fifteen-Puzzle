@@ -8,7 +8,7 @@
 #include "MathUtil.h"
 
 
-enum direction {
+enum class direction {
 	UP,
 	DOWN,
 	LEFT,
@@ -18,19 +18,19 @@ enum direction {
 class Puzzle {
 public:
 	
-	Puzzle();
-	Puzzle(int dimension);
-	Puzzle(const Puzzle& puzzle);
-	Puzzle(const Puzzle&& puzzle);
+	Puzzle()noexcept;
+	Puzzle(int dimension)noexcept;
+	Puzzle(const Puzzle& puzzle)noexcept;
+	Puzzle(const Puzzle&& puzzle) noexcept;
 	~Puzzle();
 
-	Puzzle& operator=(const Puzzle& puzzle);
-	Puzzle& operator=(const Puzzle&& puzzle);
+	Puzzle& operator=(const Puzzle& puzzle)noexcept;
+	Puzzle& operator=(const Puzzle&& puzzle) noexcept;
 
 	void swap(int swapPos); // Checks valid move
 	bool move(direction dir);
 	bool puzzleAfterMove(direction dir, Puzzle& puzzle) const;
-	int calculateContinousRows(bool ascending) const;
+	int calculateContinousRows(int partialSize) const;
 
 	int getStartPos() const;
 	int getDimension() const { return dimension; }

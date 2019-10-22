@@ -28,7 +28,7 @@ Puzzle PuzzleFactory::createRandomPuzzle(int dimension, int maxInput)
 	 */
 	myclock::time_point now = myclock::now();
 	myclock::duration d = myclock::now() - now;
-	unsigned seed = d.count();
+	unsigned seed = (unsigned int)d.count();
 
 
 	auto rng = std::mt19937{};

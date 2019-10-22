@@ -30,7 +30,7 @@ public:
 	void swap(int swapPos); // Checks valid move
 	bool move(direction dir);
 	bool puzzleAfterMove(direction dir, Puzzle& puzzle) const;
-	int calculateContinousRows(bool ascending) const;
+	int calculateContinousRows(int partialSize) const;
 
 	int getStartPos() const;
 	int getDimension() const { return dimension; }

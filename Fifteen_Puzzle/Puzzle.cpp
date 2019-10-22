@@ -92,7 +92,7 @@ bool Puzzle::puzzleAfterMove(direction dir, Puzzle& puzzle) const
 	return puzzle.move(dir);
 }
 
-int Puzzle::calculateContinousRows(bool ascending) const
+int Puzzle::calculateContinousRows(int partialSize) const
 {
 	// Optimisation:
 	// Loop over all rows
@@ -115,7 +115,7 @@ int Puzzle::calculateContinousRows(bool ascending) const
 		std::copy(puzzleNumbers.begin()+ i, puzzleNumbers.end() +i + dimension, potentialPattern.begin());
 
 		if (potentialPattern.at(0) + (dimension-1) == potentialPattern.at(dimension - 1)) {
-			numberOfSolutions += 3 * MathUtil::factorial((totalNumbers - dimension) / 2);
+			numberOfSolutions += ((( dimension - partialSize)-1)*(dimension -1)) + dimension - partialSize MathUtil::factorial((totalNumbers - dimension) / 2);
 		}
 
 	}

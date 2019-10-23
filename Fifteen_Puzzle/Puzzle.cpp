@@ -3,21 +3,21 @@
 #include <algorithm>
 #include <iomanip>
 
-Puzzle::Puzzle() : grid(nullptr), dimension(0), totalNumbers(0), zeroPos(0)
+Puzzle::Puzzle() noexcept : grid(nullptr), dimension(0), totalNumbers(0), zeroPos(0)
 {
 
 }
 
-Puzzle::Puzzle(int dimension): dimension(dimension), totalNumbers(dimension*dimension), zeroPos(dimension*dimension-1){
+Puzzle::Puzzle(int dimension) noexcept  : dimension(dimension), totalNumbers(dimension*dimension), zeroPos(dimension*dimension-1)  {
 	grid = new int[dimension * dimension]{0};
 	
 }
 
-Puzzle::Puzzle(const Puzzle& puzzle) {
+Puzzle::Puzzle(const Puzzle& puzzle) noexcept {
 	*this = puzzle;
 }
 
-Puzzle::Puzzle(const Puzzle&& puzzle)
+Puzzle::Puzzle(const Puzzle&& puzzle) noexcept
 {
 	*this = puzzle;
 }
@@ -26,7 +26,7 @@ Puzzle::~Puzzle() {
 	delete[] grid;
 }
 
-Puzzle& Puzzle::operator=(const Puzzle& puzzle){
+Puzzle& Puzzle::operator=(const Puzzle& puzzle) noexcept {
 	this->dimension = puzzle.dimension;
 	this->grid = new int[this->dimension * this->dimension];
 	this->totalNumbers = puzzle.totalNumbers;
@@ -36,7 +36,7 @@ Puzzle& Puzzle::operator=(const Puzzle& puzzle){
 	return *this;
 }
 
-Puzzle& Puzzle::operator=(const Puzzle&& puzzle)
+Puzzle& Puzzle::operator=(const Puzzle&& puzzle) noexcept
 {
 	return *this;
 }
@@ -61,22 +61,22 @@ bool Puzzle::move(direction dir)
 {
 	switch (dir)
 	{
-	case UP:
+	case direction::UP:
 		if ((zeroPos - (int)dimension) < 0)
 			return false;
 		swap(zeroPos - dimension);
 		return true;
-	case DOWN:
+	case direction::DOWN:
 		if (zeroPos + dimension >= totalNumbers)
 			return false;
 		swap(zeroPos + dimension);
 		return true;
-	case LEFT:
+	case direction::LEFT:
 		if (zeroPos % dimension == 0)
 			return false;
 		swap(zeroPos -1);
 		return true;
-	case RIGHT:
+	case direction::RIGHT:
 		if ((zeroPos + 1) % dimension == 0)
 			return false;
 		swap(zeroPos + 1);
@@ -100,6 +100,9 @@ int Puzzle::calculateContinousRows(int partialSize) const
 	// Loop from start of row to start of row + dimension
 	// Each row, check current greater than previous
 
+	if (partialSize > dimension)
+		return;
+
 	int numberOfSolutions = 0;
 	std::vector<int> puzzleNumbers;
 
@@ -115,12 +118,15 @@ int Puzzle::calculateContinousRows(int partialSize) const
 		std::copy(puzzleNumbers.begin()+ i, puzzleNumbers.end() +i + dimension, potentialPattern.begin());
 
 		if (potentialPattern.at(0) + (dimension-1) == potentialPattern.at(dimension - 1)) {
-			numberOfSolutions += ((( dimension - partialSize)-1)*(dimension -1)) + dimension - partialSize MathUtil::factorial((totalNumbers - dimension) / 2);
+
+			int numberOfPotentailRows = ((dimension - partialSize) + 1) * (dimension - 1) + (dimension - partialSize);
+
+			numberOfSolutions += numberOfPotentailRows * MathUtil::factorial((totalNumbers - dimension) / 2); // TODO check the factorial apsect for when calculating partial rows
 		}
 
 	}
 
-	int patternMatches = 0;
+	/*int patternMatches = 0;
 	std::vector<int> row;
 	for (int i = 0; i < dimension; i++) {
 		row.resize(dimension);
@@ -136,12 +142,12 @@ int Puzzle::calculateContinousRows(int partialSize) const
 		if (std::equal(row.begin(), row.end(), pattern.begin()))
 			patternMatches++;
 		row.clear();
-	}
+	}*/
 
 
 	
 	
-	return patternMatches;
+	return numberOfSolutions;
 }
 
 

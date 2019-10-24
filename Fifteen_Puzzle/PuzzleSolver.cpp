@@ -58,16 +58,16 @@ std::vector<Puzzle> PuzzleSolver::GetValidTurns(const std::vector<Puzzle>& allst
 	return validTurns;
 }
 
-int PuzzleSolver::FindContinousRows(const std::vector<Puzzle>& allStates)
-{
-	int numberOfContinousRows =0;
-	for (auto it : allStates) {
-		numberOfContinousRows += it.calculateContinousRows(true);
-		numberOfContinousRows += it.calculateContinousRows(false);
-	}
-
-	return numberOfContinousRows;
-}
+//int PuzzleSolver::FindContinousRows(const std::vector<Puzzle>& allStates)
+//{
+//	int numberOfContinousRows =0;
+//	for (auto it : allStates) {
+//		numberOfContinousRows += it.calculateSolution(true);
+//		numberOfContinousRows += it.calculateSolution(false);
+//	}
+//
+//	return numberOfContinousRows;
+//}
 
 
 

@@ -17,7 +17,8 @@ public:
 	static uint64_t arrayHash(int* arrayPointer, int arraySize) {
 		uint64_t hashvalue = 0;
 		for (int i = 0; i < arraySize; i++) {
-			hashvalue += arrayPointer[i] * (int)pow(16, i);
+			uint64_t thisIndexExponent = uint64_t(rint(pow(16, i)));
+			hashvalue += arrayPointer[i] * thisIndexExponent;
 		}
 		return hashvalue;
 	}

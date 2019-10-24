@@ -1,3 +1,7 @@
+/* Author: Michael Arnold
+   Last Edited: 24/10/19
+   Description: Class to store puzzle member fields and the relative functions to act on those fields
+*/
 #pragma once
 
 
@@ -6,6 +10,7 @@
 #include <algorithm>
 #include <cstdint>
 #include "MathUtil.h"
+
 
 
 enum class direction {
@@ -27,10 +32,9 @@ public:
 	Puzzle& operator=(const Puzzle& puzzle)noexcept;
 	Puzzle& operator=(const Puzzle&& puzzle) noexcept;
 
-	void swap(int swapPos); // Checks valid move
-	bool move(direction dir);
-	bool puzzleAfterMove(direction dir, Puzzle& puzzle) const;
-	int calculateContinousRows(int partialSize) const;
+	
+	unsigned long long calculateSolution(int partialSize) const;
+	unsigned long long startingStateSolution(int partialSize) const;
 
 	int getStartPos() const;
 	int getDimension() const { return dimension; }
@@ -42,10 +46,14 @@ public:
 private:
 
 	unsigned int indexGrid(int x, int y)const ;
+	unsigned long long SolveAtStartColumns(int partialSize) const;
+	unsigned long long SolveAtStartRow(int partialSize) const;
+	
 	
 	typedef int* iterator;
 	iterator begin() const  { return grid; }
 	iterator end()const  { return grid + totalNumbers; }
+	
 
 	int* grid;
 	int dimension;

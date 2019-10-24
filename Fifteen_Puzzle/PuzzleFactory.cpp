@@ -1,8 +1,13 @@
+/* Author: Michael Arnold
+   Last Edited: 24/10/19
+   Description: Class dedicated to creating puzzles in various means or reading from file
+*/
 #include "PuzzleFactory.h"
 #include <random>
 #include <chrono>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 
 typedef std::chrono::high_resolution_clock myclock;
@@ -12,15 +17,8 @@ Puzzle PuzzleFactory::createRandomPuzzle(int dimension, int maxInput)
 	int minNumbersRequired = dimension * dimension - 1;
 	int correctMaxInput = 0;
 
-	if (maxInput < minNumbersRequired)
-		correctMaxInput = minNumbersRequired;
-	else
-		correctMaxInput = maxInput;
-
-	std::vector<int> possibleNumbers(correctMaxInput);
-	for (int i = 0; i < possibleNumbers.size(); i++) {
-		possibleNumbers[i] = i+1;
-	}
+	std::vector<int> possibleNumbers(generatePossibleNumbers(maxInput, minNumbersRequired));
+	
 
 	/* -Seed Example 
 	   -http://www.cplusplus.com/reference/random/mersenne_twister_engine/seed/
@@ -70,10 +68,13 @@ Puzzle PuzzleFactory::createManualPuzzle(int dimension, int maxInput)
 {
 
 	Puzzle temp(dimension);
+	int updatedMax = maxInput;
 	int index = 0;
 	while (true) {
+		if (maxInput < (dimension * dimension))
+			updatedMax = dimension * dimension;
 
-		int validInput = getInputedNumber(temp, maxInput);
+		int validInput = getInputedNumber(temp, updatedMax);
 		temp.grid[index] = validInput;
 
 		index++;
@@ -85,45 +86,68 @@ Puzzle PuzzleFactory::createManualPuzzle(int dimension, int maxInput)
 	return temp;
 }
 
-Puzzle PuzzleFactory::ReadConfigurationsFromFile(const std::string& filename)
+bool PuzzleFactory::ReadConfigurationsFromFile(const std::string& filename, std::vector<Puzzle>& puzzles)
 {
-	std::ifstream myfile(filename);
 
-	std::vector<int> numbers;
+	std::vector<std::vector<int>> configurations;
 
-	bool isFirst = true;
-	int numberOfPuzzles = 0;
-	int countPuzzlesFound = 0;
-	int currentNumber = -1;
+	try {
 
-	if (!myfile.is_open())
-		throw std::runtime_error("Could not open file!");
+		std::ifstream myfile(filename);
 
+		if (!myfile.is_open())
+			throw std::runtime_error("Could not open file!");
 
-	while (!myfile.eof()) {
-		myfile >> currentNumber;
+		int numConfigurations = 0;
+		int counter = 0;
+		const char endLine = '\n';
+		const char endValue = ' ';
+		std::vector<int> currentConfigurations;
+		std::string inputHolder;
 
-		if (currentNumber == 0) {
-			countPuzzlesFound++;
+		std::getline(myfile, inputHolder, endLine);
+
+		if (std::stringstream(inputHolder) >> numConfigurations) {
+
+			std::string rowHolder;
+
+			while (std::getline(myfile, rowHolder, endLine) || counter < numConfigurations) {
+
+				if (rowHolder != "") {
+
+					std::string currentValue;
+					int value;
+					std::stringstream ss(rowHolder);
+
+					while (std::getline(ss, currentValue, endValue)) {
+
+						if (std::stringstream(currentValue) >> value)
+							currentConfigurations.push_back(value);
+					}
+				}
+				else {
+					configurations.push_back(currentConfigurations);
+					currentConfigurations.clear();
+					counter++;
+				}
+			}
 		}
 
-		if (isFirst) {
-			numberOfPuzzles = currentNumber;
-			isFirst = false;
-		}
-		else
-			numbers.push_back(currentNumber);
-
-		if (countPuzzlesFound == numberOfPuzzles)
-			break;
-		
+	}
+	catch (const std::runtime_error& error) {
+		std::cout << error.what();
+		configurations.clear();
+		return false;
 	}
 
-	
-	int dim = static_cast<int>(std::sqrt(numbers.size() + 1));
-    Puzzle p(dim);
-	generatePuzzle(numbers, p);
-	return p;
+	for (auto it : configurations) {
+		int dim = static_cast<int>(std::sqrt(it.size() + 1));
+		Puzzle p(dim);
+		generatePuzzle(it, p);
+		puzzles.push_back(p);
+	}
+	return true;
+
 }
 
 int PuzzleFactory::getInputedNumber(const Puzzle& puzzle, int maxInput)
@@ -156,10 +180,24 @@ void PuzzleFactory::generatePuzzle(const std::vector<int>& numbers, Puzzle& puzz
 	for (int i = 0; i < numbers.size(); i++) {
 		puzzle.grid[i] = numbers[i];
 	}
-	puzzle.grid[numbers.size()] = 0;
+	if (numbers.back() != 0) 
+		puzzle.grid[numbers.size()] = 0;
+	
 }
 
-void PuzzleFactory::generatePuzzle(std::vector<int>::iterator begin, std::vector<int>::const_iterator end, Puzzle& p)
+std::vector<int> PuzzleFactory::generatePossibleNumbers(const int maxInput, const int minNumbersRequired)
 {
-	for(;begin!=end; begin++)
+	int correctMaxInput = 0;
+	if (maxInput < minNumbersRequired)
+		correctMaxInput = minNumbersRequired;
+	else
+		correctMaxInput = maxInput;
+
+	std::vector<int> possibleNumbers(correctMaxInput);
+	for (int i = 0; i < possibleNumbers.size(); i++) {
+		possibleNumbers[i] = i + 1;
+	}
+	return possibleNumbers;
 }
+
+

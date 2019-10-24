@@ -1,7 +1,13 @@
+/* Author: Michael Arnold
+   Last Edited: 24/10/19
+   Description: Class to store puzzle member fields and the relative functions to act on those fields
+*/
 #include "Puzzle.h"
 #include <numeric>
 #include <algorithm>
 #include <iomanip>
+
+
 
 Puzzle::Puzzle() noexcept : grid(nullptr), dimension(0), totalNumbers(0), zeroPos(0)
 {
@@ -28,7 +34,7 @@ Puzzle::~Puzzle() {
 
 Puzzle& Puzzle::operator=(const Puzzle& puzzle) noexcept {
 	this->dimension = puzzle.dimension;
-	this->grid = new int[this->dimension * this->dimension];
+	this->grid = new int[dimension * dimension];
 	this->totalNumbers = puzzle.totalNumbers;
 	this->zeroPos = puzzle.zeroPos;
 	std::copy(puzzle.grid, puzzle.grid + puzzle.totalNumbers + 1, this->grid);
@@ -42,68 +48,14 @@ Puzzle& Puzzle::operator=(const Puzzle&& puzzle) noexcept
 }
 
 
-void Puzzle::swap(int swapPos)
+unsigned long long Puzzle::calculateSolution(int partialSize) const
 {
 
-	if ((swapPos > dimension * dimension) || (swapPos < 0)) {
-		std::cerr << "Error! Tried to swap out of range" << std::endl;
-		return;
-	}
-
-	int temp = grid[swapPos];
-	grid[swapPos] = grid[zeroPos];
-	grid[zeroPos] = temp;
-	zeroPos = swapPos;
-
-}
-
-bool Puzzle::move(direction dir)
-{
-	switch (dir)
-	{
-	case direction::UP:
-		if ((zeroPos - (int)dimension) < 0)
-			return false;
-		swap(zeroPos - dimension);
-		return true;
-	case direction::DOWN:
-		if (zeroPos + dimension >= totalNumbers)
-			return false;
-		swap(zeroPos + dimension);
-		return true;
-	case direction::LEFT:
-		if (zeroPos % dimension == 0)
-			return false;
-		swap(zeroPos -1);
-		return true;
-	case direction::RIGHT:
-		if ((zeroPos + 1) % dimension == 0)
-			return false;
-		swap(zeroPos + 1);
-		return true;
-	default:
-		return false;
-	}
-}
-
-bool Puzzle::puzzleAfterMove(direction dir, Puzzle& puzzle) const
-{
-	puzzle = *this;
-	return puzzle.move(dir);
-}
-
-int Puzzle::calculateContinousRows(int partialSize) const
-{
-	// Optimisation:
-	// Loop over all rows
-	// For each  Row
-	// Loop from start of row to start of row + dimension
-	// Each row, check current greater than previous
 
 	if (partialSize > dimension)
-		return -1;
+		return 0;
 
-	int numberOfSolutions = 0;
+	unsigned long long numberOfSolutions = 0;
 	std::vector<int> puzzleNumbers;
 
 	for (int i = 0; i < totalNumbers-1; i++) {
@@ -111,11 +63,11 @@ int Puzzle::calculateContinousRows(int partialSize) const
 	}
 
 	std::sort(puzzleNumbers.begin(), puzzleNumbers.end());
-	//std::vector<int> potentialPattern(dimension);
+
 
 	for (int i = 0; i < (totalNumbers -1) - (partialSize-1); i++) {
 
-		//std::copy(puzzleNumbers.begin()+ i, puzzleNumbers.end() +i + dimension, potentialPattern.begin());
+		
 
 		if (puzzleNumbers.at(i) + (partialSize-1) == puzzleNumbers.at(i + (partialSize - 1))) {
 
@@ -126,28 +78,18 @@ int Puzzle::calculateContinousRows(int partialSize) const
 
 	}
 
-	/*int patternMatches = 0;
-	std::vector<int> row;
-	for (int i = 0; i < dimension; i++) {
-		row.resize(dimension);
-		for (int j = 0; j < dimension; j++) {
-			row[j] = grid[(dimension * i) + j];
-		}
-		std::vector<int> pattern(dimension);
-		if (ascending)
-			std::generate(pattern.begin(), pattern.end(), [n = row[0]]() mutable {return n++; });
-		else
-			std::generate(pattern.begin(), pattern.end(), [n = row[0]]() mutable {return n--; });
-
-		if (std::equal(row.begin(), row.end(), pattern.begin()))
-			patternMatches++;
-		row.clear();
-	}*/
-
-
 	
 	
 	return numberOfSolutions;
+}
+
+unsigned long long Puzzle::startingStateSolution(int partialSize) const
+{
+	unsigned long long totalSolutions = 0;
+	totalSolutions += SolveAtStartRow(partialSize);	
+	totalSolutions += SolveAtStartColumns(partialSize);
+	
+	return totalSolutions;
 }
 
 
@@ -166,6 +108,66 @@ uint64_t Puzzle::getHash() const
 unsigned int Puzzle::indexGrid(int x, int y) const  {
 	return x + dimension * y;
 }
+
+unsigned long long Puzzle::SolveAtStartColumns(int partialSize) const
+{
+	unsigned long long numberOfSolutions = 0;
+	for (int i = 0; i < dimension; i++) { //looping coloumns
+		for (int j = 0; j <= dimension - partialSize; j++) { //looping Rows
+			int posA = j * dimension + i;
+			bool continuousCol = true;
+			bool continuousReverse = true;
+			for (int k = 1; k < partialSize; k++) {
+
+				if (grid[posA] + k != grid[posA + (dimension * (k))])
+					continuousCol = false;
+				if(grid[posA] != grid[posA + (dimension * (k))] + k)
+					continuousReverse = false;
+			
+			}
+			if (continuousCol)
+				numberOfSolutions++;
+			if (continuousReverse)
+				numberOfSolutions++;
+
+		}
+
+	}
+
+	return numberOfSolutions;
+}
+
+
+
+unsigned long long Puzzle::SolveAtStartRow(int partialSize) const
+{
+	unsigned long long numberOfSolutions = 0;
+
+	for (int j = 0; j < dimension; j++) {
+
+		for (int i = 0; i <= dimension - partialSize; i++) {
+			int posA = j * dimension + i;
+			bool continuousRow = true;
+			bool continuousReverse = true;
+			for (int k = 1; k < partialSize; k++) {
+
+				if (grid[posA] + k != grid[posA + k])
+					continuousRow = false;
+
+				if (grid[posA] != grid[posA + k] + k)
+					continuousReverse = false;
+			}
+			if (continuousRow)
+				numberOfSolutions++;
+			if (continuousReverse)
+				numberOfSolutions++;
+		}
+	}
+	
+	return numberOfSolutions;
+}
+
+
 
 std::ostream& operator<< (std::ostream& os, const Puzzle& puzzle) {
 	for (int y = 0; y < puzzle.dimension; y++) {

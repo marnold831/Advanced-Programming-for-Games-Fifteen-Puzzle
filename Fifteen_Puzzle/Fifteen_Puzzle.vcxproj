@@ -152,12 +152,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Fifteen_Puzzle.cpp" />
+    <ClCompile Include="OutputHandler.cpp" />
     <ClCompile Include="Puzzle.cpp" />
     <ClCompile Include="PuzzleFactory.cpp" />
     <ClCompile Include="PuzzleSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MathUtil.h" />
+    <ClInclude Include="OutputHandler.h" />
     <ClInclude Include="Puzzle.h" />
     <ClInclude Include="PuzzleFactory.h" />
     <ClInclude Include="PuzzleSolver.h" />

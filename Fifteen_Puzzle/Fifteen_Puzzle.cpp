@@ -4,27 +4,16 @@
 #include <iostream>
 #include "PuzzleFactory.h"
 #include "PuzzleSolver.h"
+#include "OutputHandler.h"
 #include <fstream>
 
 int main()
 {
-	Puzzle p(PuzzleFactory::createRandomPuzzle(2, 5));
-	
-	std::cout << "Starting Puzzle \n" << p << "--------"<< std::endl;;
-	
-	std::vector<uint64_t> hashes;
-	std::vector<Puzzle> allStates;
-
-	PuzzleSolver::controller(p, hashes, allStates);
-	std::vector<Puzzle> validTurns(PuzzleSolver::GetValidTurns(allStates));
-
-	for (auto it : validTurns) {
-		std::cout << it << std::endl;
-	}
-
-	std::cout << PuzzleSolver::FindContinousRows(validTurns);
-
-	
+	//Puzzle p(PuzzleFactory::createManualPuzzle(4,20));
+	//OutputHandler::printConfigurationToFile(p);
+	Puzzle d(PuzzleFactory::ReadConfigurationsFromFile("Configuration-File.txt"));
+	std::cout << d;
+	OutputHandler::printSolutionPuzzleToFile(d);
 	
 
 	

@@ -17,6 +17,7 @@ public:
 private:
 	static int getInputedNumber(const Puzzle& puzzle, int maxInput);
 	static void generatePuzzle(const std::vector<int>& numbers, Puzzle& puzzle);
+	static void generatePuzzle(std::vector<int>::iterator begin, std::vector<int>::const_iterator end, Puzzle& p);
 
 
 };

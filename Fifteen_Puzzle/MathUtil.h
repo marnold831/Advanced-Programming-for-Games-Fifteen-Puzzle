@@ -23,8 +23,8 @@ public:
 	}
 
 	static int factorial(int n) {
-		int factorial = 0;
-		for (int i = 0; i <= n; i++) {
+		int factorial = 1;
+		for (int i = n; i >= 1; i--) {
 			factorial *= i;
 		}
 		return factorial;

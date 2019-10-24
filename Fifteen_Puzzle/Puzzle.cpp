@@ -101,7 +101,7 @@ int Puzzle::calculateContinousRows(int partialSize) const
 	// Each row, check current greater than previous
 
 	if (partialSize > dimension)
-		return;
+		return -1;
 
 	int numberOfSolutions = 0;
 	std::vector<int> puzzleNumbers;
@@ -111,17 +111,17 @@ int Puzzle::calculateContinousRows(int partialSize) const
 	}
 
 	std::sort(puzzleNumbers.begin(), puzzleNumbers.end());
-	std::vector<int> potentialPattern(dimension);
+	//std::vector<int> potentialPattern(dimension);
 
-	for (int i = 0; i < totalNumbers - (dimension-1); i++) {
+	for (int i = 0; i < (totalNumbers -1) - (partialSize-1); i++) {
 
-		std::copy(puzzleNumbers.begin()+ i, puzzleNumbers.end() +i + dimension, potentialPattern.begin());
+		//std::copy(puzzleNumbers.begin()+ i, puzzleNumbers.end() +i + dimension, potentialPattern.begin());
 
-		if (potentialPattern.at(0) + (dimension-1) == potentialPattern.at(dimension - 1)) {
+		if (puzzleNumbers.at(i) + (partialSize-1) == puzzleNumbers.at(i + (partialSize - 1))) {
 
 			int numberOfPotentailRows = ((dimension - partialSize) + 1) * (dimension - 1) + (dimension - partialSize);
 
-			numberOfSolutions += numberOfPotentailRows * MathUtil::factorial((totalNumbers - dimension) / 2); // TODO check the factorial apsect for when calculating partial rows
+			numberOfSolutions += numberOfPotentailRows * MathUtil::factorial(((totalNumbers-1) - partialSize))/2; 
 		}
 
 	}

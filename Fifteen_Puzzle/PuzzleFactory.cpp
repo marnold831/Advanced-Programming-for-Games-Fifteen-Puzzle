@@ -89,18 +89,36 @@ Puzzle PuzzleFactory::ReadConfigurationsFromFile(const std::string& filename)
 {
 	std::ifstream myfile(filename);
 
-	if (!myfile.is_open())
-		throw std::exception("oops");
-
 	std::vector<int> numbers;
-	int temp = -1;
+
+	bool isFirst = true;
+	int numberOfPuzzles = 0;
+	int countPuzzlesFound = 0;
+	int currentNumber = -1;
+
+	if (!myfile.is_open())
+		throw std::runtime_error("Could not open file!");
+
+
 	while (!myfile.eof()) {
-		myfile >> temp;
-		if (temp == 0) {
-			break;
+		myfile >> currentNumber;
+
+		if (currentNumber == 0) {
+			countPuzzlesFound++;
 		}
-		numbers.push_back(temp);
+
+		if (isFirst) {
+			numberOfPuzzles = currentNumber;
+			isFirst = false;
+		}
+		else
+			numbers.push_back(currentNumber);
+
+		if (countPuzzlesFound == numberOfPuzzles)
+			break;
+		
 	}
+
 	
 	int dim = static_cast<int>(std::sqrt(numbers.size() + 1));
     Puzzle p(dim);
@@ -139,4 +157,9 @@ void PuzzleFactory::generatePuzzle(const std::vector<int>& numbers, Puzzle& puzz
 		puzzle.grid[i] = numbers[i];
 	}
 	puzzle.grid[numbers.size()] = 0;
+}
+
+void PuzzleFactory::generatePuzzle(std::vector<int>::iterator begin, std::vector<int>::const_iterator end, Puzzle& p)
+{
+	for(;begin!=end; begin++)
 }
